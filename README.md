@@ -14,6 +14,9 @@ crawlers. It's one HTML file with no install, no account and no ads.
 - 3 classes: **Sellsword** (tank), **Ashbinder** (mage), **Cutpurse** (crits, dodges, extra gold).
 - 4 zones that repeat deeper and harder: The Ossuary, Drowned Vaults, Ember Halls, Pale Below.
 
+## Music
+A procedural house track (122 BPM) plays while you explore. Each zone has its own chords, and the beat builds up when monsters are chasing you. Set it to Off, Low, Medium or High under Menu → Music.
+
 ## Saving
 - 3 save slots, stored in your browser (`localStorage`).
 - Saves automatically every few seconds, after key events, and when you leave the app.
