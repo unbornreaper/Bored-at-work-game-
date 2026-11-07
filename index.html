@@ -359,8 +359,42 @@ function deserialize(str) {
   o.map = Uint8Array.from(o.map, c => +c); o.seen = Uint8Array.from(o.seen, c => +c);
   return o;
 }
-function save() { if (!S) return; try { localStorage.setItem(SAVE_PREFIX + slot, serialize()); } catch (e) { } }
-function saveCheckpoint() { try { localStorage.setItem(SAVE_PREFIX + slot + '_cp', serialize()); } catch (e) { } }
+function save() { if (!S) return; S.savedAt = Date.now(); const j = serialize(); try { localStorage.setItem(SAVE_PREFIX + slot, j); } catch (e) { } cloudQueue('slot' + slot, j); }
+function saveCheckpoint() { S.savedAt = Date.now(); const j = serialize(); try { localStorage.setItem(SAVE_PREFIX + slot + '_cp', j); } catch (e) { } cloudQueue('slot' + slot + '_cp', j); }
+
+// ---- Optional cloud backup (only when hosted somewhere that offers a per-user store) ----
+const CLOUD = { db: null, uid: null, pending: new Map(), busy: false, timer: null };
+function cloudRef(k) { return CLOUD.db.collection('data/users/' + CLOUD.uid).doc(k); }
+function cloudQueue(k, json) { if (!CLOUD.db) return; CLOUD.pending.set(k, json); clearTimeout(CLOUD.timer); CLOUD.timer = setTimeout(cloudFlush, 3000); }
+async function cloudFlush() {
+  if (!CLOUD.db || CLOUD.busy) return; CLOUD.busy = true;
+  try {
+    for (const [k, json] of [...CLOUD.pending]) {
+      CLOUD.pending.delete(k);
+      try { if (json === null) await cloudRef(k).delete(); else await cloudRef(k).set({ json, at: Date.now() }); } catch (e) { }
+    }
+  } finally { CLOUD.busy = false; if (CLOUD.pending.size) CLOUD.timer = setTimeout(cloudFlush, 3000); }
+}
+async function cloudInit() {
+  try {
+    if (!window.claude || !window.claude.use) return;
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if (!db || !user) return;
+    const uid = await user.id(); if (!uid) return;
+    CLOUD.db = db; CLOUD.uid = uid;
+    let changed = false;
+    for (let i = 0; i < SLOTS; i++) for (const suf of ['', '_cp']) {
+      const key = SAVE_PREFIX + i + suf, snap = await cloudRef('slot' + i + suf).get();
+      let local = null; try { local = JSON.parse(localStorage.getItem(key) || 'null'); } catch (e) { }
+      if (snap.exists) {
+        const d = snap.data(); let remote = null; try { remote = JSON.parse(d.json); } catch (e) { }
+        if (remote && (!local || (remote.savedAt || 0) > (local.savedAt || 0))) { try { localStorage.setItem(key, d.json); changed = true; } catch (e) { } }
+        else if (local && (local.savedAt || 0) > (remote && remote.savedAt || 0)) cloudQueue('slot' + i + suf, localStorage.getItem(key));
+      } else if (local) cloudQueue('slot' + i + suf, localStorage.getItem(key));
+    }
+    if (changed && !G.running && !G.modal) goTitle();
+  } catch (e) { }
+}
 function readSlot(i) { try { const s = localStorage.getItem(SAVE_PREFIX + i); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
 
 // ================== UI HELPERS ==================
@@ -683,7 +717,7 @@ function goTitle() {
   card.querySelectorAll('[data-del]').forEach(b => b.onclick = () => {
     const i = +b.dataset.del, s = readSlot(i);
     modal('Delete save?', `<p>Delete ${s.name} the ${CLASSES[s.cls].name} (level ${s.lvl}, floor ${s.floor})? This cannot be undone.</p>`, [
-      { label: 'Delete forever', cls: 'bad', fn: () => { localStorage.removeItem(SAVE_PREFIX + i); localStorage.removeItem(SAVE_PREFIX + i + '_cp'); goTitle(); } },
+      { label: 'Delete forever', cls: 'bad', fn: () => { localStorage.removeItem(SAVE_PREFIX + i); localStorage.removeItem(SAVE_PREFIX + i + '_cp'); cloudQueue('slot' + i, null); cloudQueue('slot' + i + '_cp', null); goTitle(); } },
       { label: 'Keep it', fn: () => { } }]);
   });
   $('tHow').onclick = () => howTo();
@@ -910,10 +944,12 @@ const KEYS = { ArrowUp: 'fwd', w: 'fwd', W: 'fwd', ArrowDown: 'back', s: 'back',
 window.addEventListener('keydown', e => { if (e.target.tagName === 'INPUT') return; const a = KEYS[e.key]; if (a) { e.preventDefault(); if (e.key === 'Escape' && G.modal) { closeModal(); return; } act(a); } });
 document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
 window.addEventListener('pagehide', save);
+document.addEventListener('visibilitychange', () => { if (document.hidden) cloudFlush(); });
 document.addEventListener('gesturestart', e => e.preventDefault());
 
 // ================== BOOT ==================
 goTitle();
+cloudInit();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) { try { navigator.serviceWorker.register('sw.js').catch(() => { }); } catch (e) { } }
 </script>
 </body>

@@ -23,4 +23,6 @@ crawlers. It's one HTML file with no install, no account and no ads.
 2. Open the Pages URL in Safari (iPhone) or Chrome (Android).
 3. **Share → Add to Home Screen.** It opens full screen like an app and works offline after the first load.
 
-Saves belong to the browser and address you play on. If you clear Safari website data, your saves are deleted too.
+When the game is hosted as a Claude artifact, saves are also backed up to your account and restored if the phone's copy is lost.
+
+Otherwise, saves belong to the browser and address you play on. If you clear Safari website data, your saves are deleted too.
