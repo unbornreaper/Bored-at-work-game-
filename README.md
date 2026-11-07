@@ -4,18 +4,19 @@ A first-person, turn-based dungeon crawler for your phone, inspired by classic g
 crawlers. It's one HTML file with no install, no account and no ads.
 
 ## Play
-- **Move:** left pad (walk, back, turn, sidestep). Hold a button to keep moving, or swipe on the view.
-- **Strike:** hits whatever is in front of you. Walking into an enemy attacks it too.
-- **Firebolt** (4 MP) hits the first enemy in a line. **Mend** (5 MP) heals. Tonics heal, Ethers restore mana.
-- Monsters only move when you act. Turning is free.
+- **Move:** put your thumb on the left side of the controls and slide. It's a floating joystick (forward, back, sidestep).
+- **Look:** drag anywhere else, on the view or the right side.
+- **⚔ Strike** attacks what's in front of you. Auto-strike (on by default, toggle in Menu) swings for you when a monster is close and in front.
+- Near a shrine or the peddler the Strike button changes to Drink or Trade. Chests open when you walk into them.
+- Real-time combat: monsters glow red just before they hit, so back off to dodge.
+- **🔥 Firebolt** (4 MP) is a projectile. **✚ Mend** (5 MP) heals. Tonics heal, Ethers restore mana.
 - Find the glowing stairs to go deeper. Every 5th floor a **Gloam Warden** guards them.
-- Shrines fully restore you. A Lantern Peddler shows up every 3rd floor.
 - 3 classes: **Sellsword** (tank), **Ashbinder** (mage), **Cutpurse** (crits, dodges, extra gold).
 - 4 zones that repeat deeper and harder: The Ossuary, Drowned Vaults, Ember Halls, Pale Below.
 
 ## Saving
 - 3 save slots, stored in your browser (`localStorage`).
-- Saves automatically after every action and when you leave the app.
+- Saves automatically every few seconds, after key events, and when you leave the app.
 - A checkpoint is saved at the start of every floor. If you die, you can **Rise again** there (you lose 25% of your gold).
 
 ## Put it on your phone
