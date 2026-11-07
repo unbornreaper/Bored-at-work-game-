@@ -5,12 +5,16 @@ crawlers. It's one HTML file with no install, no account and no ads.
 
 ## Play
 - **Move:** put your thumb on the left side of the controls and slide. It's a floating joystick (forward, back, sidestep).
-- **Look:** drag anywhere else, on the view or the right side.
+- **Look:** drag anywhere else to look around, up and down too. Double-tap to level your view.
+- **💨 Dash** in the direction you're moving. You can't be hurt mid-dash.
 - **⚔ Strike** attacks what's in front of you. Auto-strike (on by default, toggle in Menu) swings for you when a monster is close and in front.
 - Near a shrine or the peddler the Strike button changes to Drink or Trade. Chests open when you walk into them.
 - Real-time combat: monsters glow red just before they hit, so back off to dodge.
 - **🔥 Firebolt** (4 MP) is a projectile. **✚ Mend** (5 MP) heals. Tonics heal, Ethers restore mana.
 - Find the glowing stairs to go deeper. Every 5th floor a **Gloam Warden** guards them.
+- **Boons:** each level-up lets you pick 1 of 3 perks (lifesteal, cleave, piercing bolts, thorns, magpie and more).
+- **Bounties:** each floor asks you to slay a number of one monster type for bonus gold and XP.
+- Breakable urns, spike traps, wall torches, coin and potion drops, and **Gilded** elite monsters.
 - 3 classes: **Sellsword** (tank), **Ashbinder** (mage), **Cutpurse** (crits, dodges, extra gold).
 - 4 zones that repeat deeper and harder: The Ossuary, Drowned Vaults, Ember Halls, Pale Below.
 
